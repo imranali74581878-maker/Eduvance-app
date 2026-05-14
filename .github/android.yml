@@ -21,7 +21,7 @@ jobs:
           npx cap init EDUVANCE com.eduvance.school --web-dir www
           mkdir -p www
           cp index.html www/index.html
-          npx cap add android
+          
           npx cap copy android
 
       - name: Build APK
