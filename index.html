@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EDUVANCE — School Management System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --navy:#0B1A2E;
+  --navy2:#132240;
+  --blue:#2457D4;
+  --blue-soft:#EBF1FF;
+  --gold:#C9950C;
+  --gold-soft:#FDF3D9;
+  --green:#15803D;
+  --green-soft:#F0FDF4;
+  --red:#C0392B;
+  --red-soft:#FEF2F2;
+  --amber:#B45309;
+  --amber-soft:#FFFBEB;
+  --cyan:#0369A1;
+  --ink:#111827;
+  --ink2:#374151;
+  --muted:#6B7280;
+  --border:#E5E7EB;
+  --bg:#F3F5F9;
+  --surface:#FFFFFF;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+  --shadow:0 4px 16px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 40px rgba(0,0,0,.12);
+  --r:10px;
+  --r-lg:14px;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5;}
+button,input,select,textarea{font:inherit;}
+button{cursor:pointer;}
+
+/* ══ LOGIN ══ */
+.login-page{min-height:100vh;display:grid;grid-template-columns:minmax(260px,.85fr) minmax(320px,1.15fr);}
+.brand-panel{background:var(--navy);color:#fff;padding:52px;display:flex;flex-direction:column;justify-content:space-between;min-height:100vh;position:relative;overflow:hidden;}
+.brand-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(36,87,212,.35) 0%,transparent 60%),radial-gradient(ellipse at 80% 10%,rgba(201,149,12,.15) 0%,transparent 50%);pointer-events:none;}
+.brand-mark{display:flex;align-items:center;gap:13px;font-weight:800;font-size:24px;position:relative;}
+.logo-hex{width:44px;height:44px;border:2px solid var(--gold);transform:rotate(45deg);display:grid;place-items:center;flex-shrink:0;}
+.logo-hex span{transform:rotate(-45deg);color:var(--gold);font-weight:900;font-size:18px;}
+.brand-copy{position:relative;}
+.brand-copy h1{font-size:clamp(32px,4.5vw,56px);line-height:1.05;font-weight:800;margin:40px 0 16px;letter-spacing:-.5px;}
+.brand-copy h1 em{font-style:normal;color:var(--gold);}
+.brand-copy p{color:#B8CDEE;font-size:16px;line-height:1.65;max-width:480px;}
+.brand-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px;}
+.bstat{border:1px solid rgba(255,255,255,.12);padding:14px 16px;border-radius:var(--r);backdrop-filter:blur(4px);}
+.bstat strong{display:block;font-size:22px;color:var(--gold);font-family:var(--mono);}
+.bstat span{font-size:12px;color:#99B6D8;}
+.login-wrap{display:grid;place-items:center;padding:32px;background:var(--surface);}
+.login-card{width:min(100%,420px);}
+.login-card h2{font-size:26px;font-weight:800;margin-bottom:6px;}
+.login-card>.sub{color:var(--muted);margin-bottom:26px;font-size:13.5px;}
+.field{display:grid;gap:5px;margin-bottom:14px;}
+.field label{font-size:12px;font-weight:700;color:var(--ink2);letter-spacing:.3px;text-transform:uppercase;}
+input:not([type=file]),select,textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--r);padding:10px 12px;background:var(--surface);color:var(--ink);outline:none;transition:.15s;}
+input:not([type=file]):focus,select:focus,textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(36,87,212,.1);}
+textarea{min-height:90px;resize:vertical;}
+
+/* ══ BUTTONS ══ */
+.btn-primary,.btn-ghost,.btn-danger,.btn-icon{border:0;border-radius:var(--r);min-height:38px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:700;padding:9px 14px;transition:.15s;font-size:13px;}
+.btn-primary{background:var(--blue);color:#fff;}
+.btn-primary:hover{background:#1A45B5;}
+.btn-ghost{background:var(--blue-soft);color:var(--blue);}
+.btn-ghost:hover{background:#D4E3FF;}
+.btn-danger{background:var(--red-soft);color:var(--red);}
+.btn-icon{width:38px;padding:0;background:var(--bg);color:var(--ink2);border:1.5px solid var(--border);}
+.btn-icon:hover{background:var(--border);}
+.btn-full{width:100%;justify-content:center;}
+.btn-sm{min-height:32px;padding:6px 11px;font-size:12px;}
+
+/* ══ APP SHELL ══ */
+.app{display:none;min-height:100vh;grid-template-columns:268px 1fr;}
+.sidebar{background:var(--navy);color:#fff;min-height:100vh;padding:18px 12px;position:sticky;top:0;align-self:start;display:flex;flex-direction:column;}
+.side-logo{display:flex;align-items:center;gap:11px;padding:6px 8px 18px;border-bottom:1px solid rgba(255,255,255,.08);}
+.side-logo strong{font-size:17px;font-weight:800;}
+.side-logo small{color:#7BA4D4;font-size:10.5px;display:block;margin-top:1px;}
+.nav-section{font-size:9.5px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.25);padding:14px 10px 5px;text-transform:uppercase;}
+.nav-btn{border:0;color:rgba(255,255,255,.5);background:transparent;border-radius:8px;padding:9px 10px;display:flex;align-items:center;gap:9px;text-align:left;width:100%;font-weight:500;font-size:13px;transition:.15s;margin-bottom:1px;position:relative;}
+.nav-btn:hover,.nav-btn.active{background:rgba(255,255,255,.09);color:#fff;}
+.nav-btn.active{color:#60A5FA;font-weight:700;}
+.nav-btn.active::before{content:'';position:absolute;left:0;top:22%;height:56%;width:3px;background:#60A5FA;border-radius:0 2px 2px 0;}
+.nav-icon{font-size:16px;min-width:18px;text-align:center;}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:800;padding:1px 6px;border-radius:9px;}
+.sidebar-foot{margin-top:auto;padding-top:12px;border-top:1px solid rgba(255,255,255,.08);}
+
+/* ══ MAIN ══ */
+.main{min-width:0;padding:22px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:13px 18px;box-shadow:var(--shadow-sm);flex-wrap:wrap;}
+.topbar-left{flex:1;min-width:0;}
+.topbar-left h2{font-size:20px;font-weight:800;margin-bottom:1px;}
+.topbar-left p{color:var(--muted);font-size:12px;}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.notif-btn{width:38px;height:38px;border-radius:var(--r);border:1.5px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;font-size:17px;}
+.notif-dot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid var(--surface);}
+.user-chip{display:flex;align-items:center;gap:9px;padding:5px 12px 5px 5px;border:1.5px solid var(--border);border-radius:30px;cursor:pointer;}
+.u-avatar{width:30px;height:30px;border-radius:50%;background:var(--navy2);color:#60A5FA;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.u-info{display:flex;flex-direction:column;}
+.u-name{font-size:12.5px;font-weight:700;color:var(--ink);}
+.u-role{font-size:10px;color:var(--muted);}
+
+/* ══ SCREENS ══ */
+.screen{display:none;}
+.screen.active{display:block;animation:fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+
+/* ══ GRID ══ */
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+.gap{margin-top:14px;}
+
+/* ══ CARD ══ */
+.card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:16px 18px;box-shadow:var(--shadow-sm);}
+.card-hdr{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.card-hdr h3{font-size:15px;font-weight:700;margin:0;}
+.card-hdr .side{display:flex;align-items:center;gap:8px;}
+
+/* ══ STAT CARD ══ */
+.stat-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:15px 17px;box-shadow:var(--shadow-sm);}
+.stat-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:10px;}
+.stat-ico.blue{background:var(--blue-soft);color:var(--blue);}
+.stat-ico.green{background:var(--green-soft);color:var(--green);}
+.stat-ico.amber{background:var(--amber-soft);color:var(--amber);}
+.stat-ico.red{background:var(--red-soft);color:var(--red);}
+.stat-ico.gold{background:var(--gold-soft);color:var(--gold);}
+.stat-num{font-size:26px;font-weight:800;color:var(--ink);font-family:var(--mono);}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:3px;}
+.stat-chg{font-size:11px;margin-top:5px;display:flex;align-items:center;gap:3px;}
+.stat-chg.up{color:var(--green);}
+.stat-chg.dn{color:var(--red);}
+
+/* ══ PILLS ══ */
+.pill{display:inline-flex;align-items:center;gap:3px;border-radius:99px;padding:3px 9px;font-size:11px;font-weight:700;white-space:nowrap;}
+.pill-green{background:var(--green-soft);color:var(--green);}
+.pill-red{background:var(--red-soft);color:var(--red);}
+.pill-amber{background:var(--amber-soft);color:var(--amber);}
+.pill-blue{background:var(--blue-soft);color:var(--blue);}
+.pill-gold{background:var(--gold-soft);color:var(--gold);}
+.pill-gray{background:#F3F4F6;color:var(--muted);}
+
+/* ══ TABLE ══ */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r-lg);border:1.5px solid var(--border);background:var(--surface);}
+table{width:100%;border-collapse:collapse;min-width:600px;font-size:13px;}
+thead th{text-align:left;padding:10px 13px;color:var(--muted);font-size:10.5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;background:#F8FAFC;border-bottom:1.5px solid var(--border);}
+tbody td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:#FAFBFD;}
+
+/* ══ PROGRESS BAR ══ */
+.bar{height:7px;background:#E5E7EB;border-radius:99px;overflow:hidden;margin-top:5px;}
+.bar-fill{height:100%;border-radius:99px;background:var(--blue);transition:width .6s ease;}
+
+/* ══ ATTENDANCE ══ */
+.att-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;}
+.att-cell{min-height:46px;border:1.5px solid var(--border);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:11px;font-weight:800;cursor:pointer;transition:.15s;user-select:none;background:#F8FAFC;}
+.att-cell.present{background:var(--green-soft);border-color:#86EFAC;color:var(--green);}
+.att-cell.absent{background:var(--red-soft);border-color:#FCA5A5;color:var(--red);}
+.att-cell.leave{background:var(--amber-soft);border-color:#FCD34D;color:var(--amber);}
+
+/* ══ ALERT / TIMELINE ══ */
+.alert-box{display:flex;gap:10px;padding:11px 13px;border-radius:var(--r);font-size:12.5px;margin-top:11px;}
+.alert-box i{font-size:16px;flex-shrink:0;margin-top:1px;}
+.alert-box .a-title{font-weight:700;margin-bottom:2px;}
+.alert-warn{background:var(--amber-soft);color:var(--amber);}
+.alert-info{background:var(--blue-soft);color:var(--blue);}
+.alert-suc{background:var(--green-soft);color:var(--green);}
+.alert-err{background:var(--red-soft);color:var(--red);}
+.timeline{display:grid;gap:10px;}
+.tl-item{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:start;font-size:13px;}
+.tl-time{font-weight:800;color:var(--blue);font-family:var(--mono);font-size:12px;}
+
+/* ══ PERIOD BOARD ══ */
+.period-row{display:grid;grid-template-columns:1.4fr 1fr 1fr 110px 100px;gap:10px;align-items:center;padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--r);background:#FAFBFD;margin-bottom:7px;}
+.period-row strong{display:block;font-size:13px;}
+.period-row span.sub{color:var(--muted);font-size:12px;}
+
+/* ══ UPLOAD ══ */
+.upload-zone{border:2px dashed var(--border);border-radius:var(--r);padding:20px;text-align:center;cursor:pointer;transition:.2s;background:#F8FAFC;}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-soft);}
+.upload-zone.dragover{border-color:var(--blue);background:var(--blue-soft);}
+.uz-icon{font-size:28px;margin-bottom:7px;}
+.uz-title{font-size:13px;font-weight:600;color:var(--ink2);margin-bottom:3px;}
+.uz-sub{font-size:11px;color:var(--muted);}
+.preview-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:9px;margin-top:12px;}
+.preview-tile{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:1;border:1.5px solid var(--border);}
+.preview-tile img{width:100%;height:100%;object-fit:cover;}
+.preview-tile .del-btn{position:absolute;top:5px;right:5px;width:21px;height:21px;background:rgba(0,0,0,.55);border:0;border-radius:50%;color:#fff;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.preview-tile .ai-badge{position:absolute;bottom:5px;left:5px;background:var(--blue);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;cursor:pointer;}
+
+/* ══ AI CHAT ══ */
+.chat-box{min-height:280px;max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:9px;padding:13px;background:#F8FAFC;border:1.5px solid var(--border);border-radius:var(--r);margin-bottom:12px;}
+.chat-box::-webkit-scrollbar{width:4px;}
+.chat-box::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:3px;}
+.msg{padding:10px 13px;border-radius:12px;font-size:13px;max-width:82%;line-height:1.55;}
+.msg.bot{background:var(--surface);border:1.5px solid var(--border);align-self:flex-start;border-radius:12px 12px 12px 2px;}
+.msg.bot b{color:var(--blue);}
+.msg.me{background:var(--blue);color:#fff;align-self:flex-end;border-radius:12px 12px 2px 12px;}
+.msg.thinking{color:var(--muted);font-style:italic;background:var(--surface);border:1.5px solid var(--border);}
+.ai-img-strip{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:7px;}
+.ai-img-mini{width:52px;height:52px;border-radius:7px;overflow:hidden;position:relative;border:1.5px solid var(--border);flex-shrink:0;}
+.ai-img-mini img{width:100%;height:100%;object-fit:cover;}
+.ai-img-mini .rm{position:absolute;top:2px;right:2px;width:16px;height:16px;background:rgba(0,0,0,.6);border:0;border-radius:50%;color:#fff;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.chat-input-row{display:flex;gap:7px;}
+.chat-input-row input{flex:1;border:1.5px solid var(--border);border-radius:var(--r);padding:9px 12px;font-size:13px;background:var(--surface);color:var(--ink);outline:none;}
+.chat-input-row input:focus{border-color:var(--blue);}
+.ai-send{width:40px;height:40px;background:var(--blue);border:0;border-radius:var(--r);color:#fff;font-size:17px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:.15s;}
+.ai-send:hover{background:#1A45B5;}
+.ai-send:disabled{opacity:.4;cursor:not-allowed;}
+
+/* ══ BUS MAP ══ */
+.bus-map{position:relative;min-height:320px;background:linear-gradient(135deg,#0F2349 0%,#1A3A6E 100%);border-radius:var(--r-lg);overflow:hidden;border:1.5px solid var(--border);}
+.bus-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(96,165,250,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(96,165,250,.06) 1px,transparent 1px);background-size:32px 32px;}
+.bus-route{position:absolute;inset:50px;border:5px solid rgba(36,87,212,.3);border-radius:40px;}
+.bus-icon{position:absolute;left:14%;top:43%;width:48px;height:48px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;box-shadow:0 8px 24px rgba(0,0,0,.3);animation:busRide 7s ease-in-out infinite alternate;}
+@keyframes busRide{from{transform:translate(0,0);}to{transform:translate(380px,-60px);}}
+.bus-live{position:absolute;top:12px;right:14px;display:flex;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.6);}
+.live-dot{width:7px;height:7px;background:#22C55E;border-radius:50%;animation:livePulse 1.4s infinite;}
+@keyframes livePulse{0%,100%{opacity:1;}50%{opacity:.2;}}
+
+/* ══ TOAST ══ */
+.toast{position:fixed;right:20px;bottom:20px;background:var(--navy);color:#fff;padding:13px 16px;border-radius:var(--r);box-shadow:var(--shadow-lg);display:none;z-index:100;max-width:340px;font-size:13px;border-left:3px solid var(--blue);}
+
+/* ══ QUICK ACTIONS ══ */
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.qa-btn{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);font-size:12.5px;font-weight:600;color:var(--ink2);cursor:pointer;transition:.15s;}
+.qa-btn:hover{background:var(--blue-soft);border-color:var(--blue);color:var(--blue);}
+.qa-ico{font-size:16px;}
+
+/* ══ FORM ══ */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:11px;}
+.fg label{font-size:11.5px;font-weight:700;color:var(--ink2);text-transform:uppercase;letter-spacing:.3px;}
+.fgrid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fgrid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+/* ══ ANNOUNCEMENT CARD ══ */
+.ann-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
+.ann-card.urgent{border-left:4px solid var(--red);}
+.ann-card.info{border-left:4px solid var(--blue);}
+.ann-title{font-size:13.5px;font-weight:700;color:var(--ink);margin-bottom:4px;}
+.ann-meta{font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px;align-items:center;}
+.ann-body{font-size:12.5px;color:var(--ink2);line-height:1.6;}
+.ch{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:7px;}
+.ch-wa{background:#D1FAE5;color:#065F46;}
+.ch-sms{background:var(--amber-soft);color:var(--amber);}
+.ch-push{background:var(--blue-soft);color:var(--blue);}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:1024px){.g4{grid-template-columns:repeat(2,1fr);}.period-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:768px){.login-page{grid-template-columns:1fr;}.brand-panel{min-height:auto;padding:30px;}.app{grid-template-columns:1fr;}.sidebar{position:fixed;z-index:20;width:268px;transform:translateX(-110%);transition:.2s ease;}.sidebar.open{transform:translateX(0);}.g2,.g3,.g4{grid-template-columns:1fr;}.mobile-menu-btn{display:flex !important;}}
+.mobile-menu-btn{display:none;width:38px;height:38px;background:var(--bg);border:1.5px solid var(--border);border-radius:var(--r);align-items:center;justify-content:center;font-size:18px;cursor:pointer;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN PAGE ═══ -->
+<section class="login-page" id="loginPage">
+  <div class="brand-panel">
+    <div class="brand-mark">
+      <div class="logo-hex"><span>E</span></div>
+      <span>EDUVANCE</span>
+    </div>
+    <div class="brand-copy">
+      <h1>Smart school control,<br><em>gate to classroom.</em></h1>
+      <p>Advancing Education Worldwide — attendance, fees, results, AI assistant, bus tracking, digital diary, photo gallery, and live period monitoring.</p>
+      <div class="brand-stats">
+        <div class="bstat"><strong>14</strong><span>Core Screens</span></div>
+        <div class="bstat"><strong>5</strong><span>User Roles</span></div>
+        <div class="bstat"><strong>24/7</strong><span>Live Alerts</span></div>
+      </div>
+    </div>
+    <small style="color:rgba(255,255,255,.25);font-size:11px;">EDUVANCE · Advancing Education Worldwide · v2.0</small>
+  </div>
+  <div class="login-wrap">
+    <form class="login-card" id="loginForm">
+      <h2>Welcome Back</h2>
+      <p class="sub">Select your role and enter credentials to continue.</p>
+      <div class="field"><label>Role</label>
+        <select id="roleSelect">
+          <option>Super Admin</option>
+          <option selected>Director</option>
+          <option>Head Teacher / HM</option>
+          <option>Teacher</option>
+          <option>Parent</option>
+        </select>
+      </div>
+      <div class="field"><label>Email</label><input type="email" value="director@eduvance.pk"/></div>
+      <div class="field"><label>Password</label><input type="password" value="••••••••"/></div>
+      <button class="btn-primary btn-full" type="submit" style="min-height:44px;font-size:14px;">Enter EDUVANCE →</button>
+      <p style="text-align:center;color:var(--muted);font-size:11.5px;margin-top:14px;">Demo mode — any role works</p>
+    </form>
+  </div>
+</section>
+
+<!-- ═══ APP SHELL ═══ -->
+<section class="app" id="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-logo">
+      <div class="logo-hex" style="width:36px;height:36px;"><span style="font-size:15px;">E</span></div>
+      <div><strong>EDUVANCE</strong><small>Advancing Education</small></div>
+    </div>
+    <nav id="nav" style="flex:1;overflow-y:auto;scrollbar-width:none;"></nav>
+    <div class="sidebar-foot">
+      <button class="nav-btn" id="logoutBtn" style="color:rgba(255,255,255,.4);">
+        <span class="nav-icon">🚪</span><span>Logout</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="mobile-menu-btn" id="menuBtn">☰</button>
+      <div class="topbar-left">
+        <h2 id="pgTitle">Dashboard</h2>
+        <p id="pgSub">Live school overview and quick controls</p>
+      </div>
+      <div class="topbar-right">
+        <div class="notif-btn">🔔<div class="notif-dot"></div></div>
+        <div class="user-chip">
+          <div class="u-avatar" id="tbAva">DR</div>
+          <div class="u-info">
+            <div class="u-name" id="tbName">Dr. Rashid</div>
+            <div class="u-role" id="tbRole">Director</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ▌ DASHBOARD ▌ -->
+    <section class="screen active" id="sc-dashboard">
+      <div class="g4">
+        <div class="stat-card"><div class="stat-ico blue">👥</div><div class="stat-num">842</div><div class="stat-lbl">Total Students</div><div class="stat-chg up">▲ +12 this month</div></div>
+        <div class="stat-card"><div class="stat-ico green">✅</div><div class="stat-num">91%</div><div class="stat-lbl">Today Attendance</div><div class="stat-chg up">▲ +1.8% vs yesterday</div></div>
+        <div class="stat-card"><div class="stat-ico amber">⏱</div><div class="stat-num">3</div><div class="stat-lbl">Late Periods</div><div class="stat-chg dn">▼ Needs attention</div></div>
+        <div class="stat-card"><div class="stat-ico gold">₨</div><div class="stat-num">1.8M</div><div class="stat-lbl">Monthly Fees</div><div class="stat-chg up">▲ 76% collected</div></div>
+      </div>
+      <div class="g2 gap">
+        <div class="card">
+          <div class="card-hdr"><h3>Quick Actions</h3><span class="pill pill-blue">Today</span></div>
+          <div class="qa-grid">
+            <div class="qa-btn" onclick="go('admission')"><span class="qa-ico">➕</span>New Admission</div>
+            <div class="qa-btn" onclick="go('attendance')"><span class="qa-ico">✅</span>Mark Attendance</div>
+            <div class="qa-btn" onclick="go('periods')"><span class="qa-ico">⏱</span>Period Board</div>
+            <div class="qa-btn" onclick="go('announcements')"><span class="qa-ico">📣</span>Announcement</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Live Alerts</h3><span class="pill pill-red">4 active</span></div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-time">09:05</div><div>Class 8 Math started 5 min late.</div></div>
+            <div class="tl-item"><div class="tl-time">10:30</div><div>3 students absent 3rd day — WhatsApp queued.</div></div>
+            <div class="tl-item"><div class="tl-time">11:15</div><div>Bus A reached Stop 4 — parents notified.</div></div>
+            <div class="tl-item"><div class="tl-time">12:00</div><div>Fee due reminder sent to 18 parents.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="g3 gap">
+        <div class="card">
+          <div class="card-hdr"><h3>Attendance Trend</h3></div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:3px;">Mon</div><div class="bar"><div class="bar-fill" style="width:92%;"></div></div>
+          <div style="font-size:12px;color:var(--muted);margin:6px 0 3px;">Tue</div><div class="bar"><div class="bar-fill" style="width:88%;"></div></div>
+          <div style="font-size:12px;color:var(--muted);margin:6px 0 3px;">Wed</div><div class="bar"><div class="bar-fill" style="width:91%;"></div></div>
+          <div style="font-size:12px;color:var(--muted);margin:6px 0 3px;">Thu</div><div class="bar"><div class="bar-fill" style="width:94%;"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Fee Collection</h3></div>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:3px;">Paid</div><div class="bar"><div class="bar-fill" style="width:76%;background:var(--green);"></div></div>
+          <div style="font-size:12px;color:var(--amber);margin:6px 0 3px;font-weight:700;">Pending</div><div class="bar"><div class="bar-fill" style="width:24%;background:var(--amber);"></div></div>
+          <div style="margin-top:10px;font-size:12.5px;"><span class="pill pill-green">JazzCash 214</span> <span class="pill pill-amber">Locked 31</span></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>AI Assistant</h3><span class="pill pill-blue">Claude</span></div>
+          <p style="color:var(--muted);font-size:12.5px;margin-bottom:12px;">Lesson plans, question papers, image analysis, Urdu/English/Sindhi support.</p>
+          <button class="btn-primary btn-full" onclick="go('ai')">Open AI Assistant →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ STUDENTS ▌ -->
+    <section class="screen" id="sc-students">
+      <div class="card">
+        <div class="card-hdr"><h3>Students</h3><button class="btn-primary" onclick="go('admission')">➕ Add Student</button></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>GR No</th><th>Student</th><th>Class</th><th>Parent</th><th>Contact</th><th>Fee</th><th>Att.</th><th></th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:var(--mono);font-size:11px;color:var(--muted);">EDV-2026-001</td><td><b>Ayesha Khan</b></td><td>7-A</td><td>Mr. Khan</td><td style="font-size:12px;">0300-1111111</td><td><span class="pill pill-green">Paid</span></td><td style="color:var(--green);font-weight:700;">96%</td><td><div style="display:flex;gap:5px;"><button class="btn-icon btn-sm">👁</button><button class="btn-icon btn-sm">✏</button></div></td></tr>
+              <tr><td style="font-family:var(--mono);font-size:11px;color:var(--muted);">EDV-2026-002</td><td><b>Ali Raza</b></td><td>8-B</td><td>Mrs. Raza</td><td style="font-size:12px;">0312-2222222</td><td><span class="pill pill-amber">Due</span></td><td style="color:var(--amber);font-weight:700;">78%</td><td><div style="display:flex;gap:5px;"><button class="btn-icon btn-sm">👁</button><button class="btn-icon btn-sm">✏</button></div></td></tr>
+              <tr><td style="font-family:var(--mono);font-size:11px;color:var(--muted);">EDV-2026-003</td><td><b>Maham Noor</b></td><td>5-A</td><td>Mr. Noor</td><td style="font-size:12px;">0345-3333333</td><td><span class="pill pill-green">Paid</span></td><td style="color:var(--green);font-weight:700;">100%</td><td><div style="display:flex;gap:5px;"><button class="btn-icon btn-sm">👁</button><button class="btn-icon btn-sm">✏</button></div></td></tr>
+              <tr><td style="font-family:var(--mono);font-size:11px;color:var(--muted);">EDV-2026-004</td><td><b>Bilal Ahmed</b></td><td>6-C</td><td>Mr. Ahmed</td><td style="font-size:12px;">0333-4444444</td><td><span class="pill pill-red">Locked</span></td><td style="color:var(--red);font-weight:700;">62%</td><td><div style="display:flex;gap:5px;"><button class="btn-icon btn-sm">👁</button><button class="btn-icon btn-sm">✏</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ TEACHERS ▌ -->
+    <section class="screen" id="sc-teachers">
+      <div class="g3">
+        <div class="stat-card"><div class="stat-ico blue">👨‍🏫</div><div class="stat-num">46</div><div class="stat-lbl">Total Teachers</div></div>
+        <div class="stat-card"><div class="stat-ico green">🕘</div><div class="stat-num">42</div><div class="stat-lbl">On Time Today</div></div>
+        <div class="stat-card"><div class="stat-ico red">⚠</div><div class="stat-num">4</div><div class="stat-lbl">Show Cause Flags</div></div>
+      </div>
+      <div class="card gap">
+        <div class="card-hdr"><h3>Teacher Time-In</h3><button class="btn-ghost" onclick="toast('Show cause notice generated for repeated late arrival.')">Generate Notice</button></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Teacher</th><th>Subject</th><th>Time In</th><th>Periods</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              <tr><td><b>Sir Ahmed</b></td><td>Mathematics</td><td style="font-family:var(--mono);">07:47 AM</td><td>6</td><td><span class="pill pill-green">On Time</span></td><td><button class="btn-icon btn-sm">✏</button></td></tr>
+              <tr><td><b>Miss Sara</b></td><td>Science</td><td style="font-family:var(--mono);">08:09 AM</td><td>5</td><td><span class="pill pill-amber">Late</span></td><td><button class="btn-icon btn-sm" onclick="toast('Show cause notice sent to Miss Sara.')">📨</button></td></tr>
+              <tr><td><b>Sir Bilal</b></td><td>English</td><td style="color:var(--muted);">Not marked</td><td>4</td><td><span class="pill pill-red">Absent</span></td><td><button class="btn-icon btn-sm" onclick="toast('Absent notice sent to Sir Bilal and HM.')">📨</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert-box alert-warn" style="margin-top:12px;">⚠ <div><div class="a-title">Auto Show Cause</div><div>Miss Sara late 3 times this week. Notice generated and sent to Director.</div></div></div>
+      </div>
+    </section>
+
+    <!-- ▌ ATTENDANCE ▌ -->
+    <section class="screen" id="sc-attendance">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><h3>Class 7-A Attendance</h3><span class="pill pill-blue">Auto WhatsApp</span></div>
+          <div class="att-grid" id="attGrid"></div>
+          <div style="display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;">
+            <button class="btn-primary" onclick="toast('Attendance saved! Absent parents will receive WhatsApp + SMS alerts automatically.')">💾 Save Attendance</button>
+            <button class="btn-ghost" onclick="shuffleAtt()">🔀 Shuffle Demo</button>
+          </div>
+          <div class="alert-box alert-warn" style="margin-top:12px;">⚠ <div><div class="a-title">3 students absent 3rd day</div><div>WhatsApp + SMS auto-sent to parents. HM flagged.</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Alert Rules</h3></div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-time">1 day</div><div>Push notification to parent</div></div>
+            <div class="tl-item"><div class="tl-time">2 days</div><div>WhatsApp reminder sent</div></div>
+            <div class="tl-item"><div class="tl-time">3 days</div><div>WhatsApp + SMS + HM flagged</div></div>
+            <div class="tl-item"><div class="tl-time">5 days</div><div>Director alert + show cause</div></div>
+          </div>
+          <div style="margin-top:14px;">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">Today's Attendance</div>
+            <div class="bar"><div class="bar-fill" style="width:91%;"></div></div>
+            <div style="font-size:12px;font-weight:700;color:var(--green);margin-top:4px;">91% — 34/37 present</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ PERIOD ALERTS ▌ -->
+    <section class="screen" id="sc-periods">
+      <div class="g4">
+        <div class="stat-card"><div class="stat-ico blue">⏱</div><div class="stat-num">38</div><div class="stat-lbl">Today Periods</div></div>
+        <div class="stat-card"><div class="stat-ico green">▶</div><div class="stat-num">9</div><div class="stat-lbl">Running Now</div></div>
+        <div class="stat-card"><div class="stat-ico amber">⚠</div><div class="stat-num" id="lateCount">3</div><div class="stat-lbl">Late Started</div></div>
+        <div class="stat-card"><div class="stat-ico red">🚫</div><div class="stat-num" id="missedCount">1</div><div class="stat-lbl">Not Started</div></div>
+      </div>
+      <div class="g2 gap">
+        <div class="card">
+          <div class="card-hdr"><h3>Period Board</h3><span class="pill pill-blue">Auto Alert</span></div>
+          <div id="periodBoard"></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Alert Rules</h3></div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-time">-5 min</div><div>Teacher gets next period reminder</div></div>
+            <div class="tl-item"><div class="tl-time">Start</div><div>Teacher confirmation alert</div></div>
+            <div class="tl-item"><div class="tl-time">+5 min</div><div>HM gets late alert if not started</div></div>
+            <div class="tl-item"><div class="tl-time">-2 min</div><div>Teacher gets ending reminder</div></div>
+          </div>
+          <button class="btn-primary" style="margin-top:14px;" onclick="toast('⚠ HM Alert: Class 5-A English period has not started. Sir Bilal notified.')">Simulate Alert</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ RESULTS ▌ -->
+    <section class="screen" id="sc-results">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><h3>Result Entry</h3><span class="pill pill-blue">Punjab Board</span></div>
+          <div class="fg"><label>Student</label><select><option>Ayesha Khan — 7-A</option><option>Ali Raza — 8-B</option><option>Maham Noor — 5-A</option></select></div>
+          <div class="fg"><label>Subject</label><select><option>Science</option><option>Mathematics</option><option>English</option><option>Urdu</option><option>Pakistan Studies</option><option>Islamiat</option></select></div>
+          <div class="fgrid2">
+            <div class="fg"><label>Marks Obtained</label><input type="number" value="86"/></div>
+            <div class="fg"><label>Total Marks</label><input type="number" value="100"/></div>
+          </div>
+          <button class="btn-primary btn-full" onclick="toast('Result saved! PDF report and WhatsApp update prepared for parent.')">Save Result</button>
+          <div class="alert-box alert-suc" style="margin-top:11px;">✅ <div><div class="a-title">Auto Send</div><div>Result PDF automatically sent to parent via WhatsApp.</div></div></div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Ayesha Khan — Performance</h3></div>
+          <div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px;"><span>Science</span><span style="font-weight:700;color:var(--green);">86/100</span></div><div class="bar"><div class="bar-fill" style="width:86%;"></div></div></div>
+          <div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px;"><span>Mathematics</span><span style="font-weight:700;color:var(--blue);">78/100</span></div><div class="bar"><div class="bar-fill" style="width:78%;background:var(--blue);"></div></div></div>
+          <div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px;"><span>English</span><span style="font-weight:700;color:var(--green);">92/100</span></div><div class="bar"><div class="bar-fill" style="width:92%;background:var(--green);"></div></div></div>
+          <div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:3px;"><span>Urdu</span><span style="font-weight:700;color:var(--amber);">74/100</span></div><div class="bar"><div class="bar-fill" style="width:74%;background:var(--amber);"></div></div></div>
+          <div style="margin-top:14px;padding:10px;background:var(--green-soft);border-radius:var(--r);"><div style="font-size:22px;font-weight:800;color:var(--green);">82.5%</div><div style="font-size:12px;color:var(--green);">Overall — <b>Distinction</b></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ FEES ▌ -->
+    <section class="screen" id="sc-fees">
+      <div class="g3">
+        <div class="stat-card"><div class="stat-ico green">💳</div><div class="stat-num">76%</div><div class="stat-lbl">Fees Paid</div><div class="stat-chg up">▲ JazzCash 214</div></div>
+        <div class="stat-card"><div class="stat-ico amber">📱</div><div class="stat-num">214</div><div class="stat-lbl">Digital Payments</div></div>
+        <div class="stat-card"><div class="stat-ico red">🔒</div><div class="stat-num">31</div><div class="stat-lbl">Auto Locked</div></div>
+      </div>
+      <div class="card gap">
+        <div class="card-hdr"><h3>Fee Management</h3><button class="btn-primary" onclick="toast('Receipt generated and WhatsApp sent to parent.')">Generate Receipt</button></div>
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr><th>Student</th><th>Month</th><th>Amount</th><th>Method</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td><b>Ayesha Khan</b></td><td>May 2026</td><td style="font-family:var(--mono);">Rs 4,500</td><td>JazzCash</td><td><span class="pill pill-green">Paid</span></td></tr>
+              <tr><td><b>Ali Raza</b></td><td>May 2026</td><td style="font-family:var(--mono);">Rs 4,500</td><td>—</td><td><span class="pill pill-amber">Due</span></td></tr>
+              <tr><td><b>Maham Noor</b></td><td>May 2026</td><td style="font-family:var(--mono);">Rs 4,000</td><td>EasyPaisa</td><td><span class="pill pill-green">Paid</span></td></tr>
+              <tr><td><b>Bilal Ahmed</b></td><td>May 2026</td><td style="font-family:var(--mono);">Rs 4,000</td><td>—</td><td><span class="pill pill-red">Locked</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="alert-box alert-err" style="margin-top:11px;">🔒 <div><div class="a-title">Auto Lock Active</div><div>Bilal Ahmed's account locked — fee overdue 15+ days. Data safe. Auto unlock on payment.</div></div></div>
+      </div>
+    </section>
+
+    <!-- ▌ DIARY ▌ -->
+    <section class="screen" id="sc-diary">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><h3>Digital Diary</h3><span class="pill pill-blue">Image Upload</span></div>
+          <div class="fg"><label>Class</label><select><option>7-A</option><option>8-B</option><option>5-A</option></select></div>
+          <div class="fg"><label>Homework / Notice</label><textarea>Read chapter 4 and solve questions 1 to 5. Bring textbook tomorrow.</textarea></div>
+          <div class="fg">
+            <label>Attach Worksheet Image</label>
+            <div class="upload-zone" onclick="document.getElementById('diaryFile').click()">
+              <div class="uz-icon">📎</div>
+              <div class="uz-title">Click to upload worksheet</div>
+              <div class="uz-sub">JPG, PNG — image shows to parents</div>
+            </div>
+            <input type="file" id="diaryFile" accept="image/*" multiple style="display:none;" data-grid="diaryGrid"/>
+            <div class="preview-grid" id="diaryGrid"></div>
+          </div>
+          <button class="btn-primary btn-full" onclick="toast('📘 Diary sent to all Class 7-A parents via Push notification + WhatsApp.')">Send Diary to Parents</button>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Recent Homework</h3></div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-time">7-A</div><div>Science worksheet shared. Image attached.</div></div>
+            <div class="tl-item"><div class="tl-time">8-B</div><div>Math exercise 2.3 assigned with diagram.</div></div>
+            <div class="tl-item"><div class="tl-time">5-A</div><div>English story reading + 5 questions.</div></div>
+          </div>
+          <div class="alert-box alert-suc" style="margin-top:12px;">✅ <div><div class="a-title">All diaries delivered</div><div>Push + WhatsApp delivered to 98% parents today.</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ ANNOUNCEMENTS ▌ -->
+    <section class="screen" id="sc-announcements">
+      <div class="ann-card urgent">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><div class="ann-title">Emergency Holiday — Tomorrow</div><span class="pill pill-red">Urgent</span></div>
+        <div class="ann-meta"><span>📅 Today 9:00 AM · All Classes</span><span class="ch ch-wa">📱 WhatsApp</span><span class="ch ch-sms">💬 SMS</span><span class="ch ch-push">🔔 Push</span></div>
+        <div class="ann-body">School will remain closed tomorrow due to local elections. All classes resume Monday. This notification cannot be disabled by parents.</div>
+      </div>
+      <div class="ann-card info">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><div class="ann-title">Annual Sports Day — May 20</div><span class="pill pill-blue">Upcoming</span></div>
+        <div class="ann-meta"><span>Yesterday</span><span class="ch ch-push">🔔 Push</span></div>
+        <div class="ann-body">Annual sports day will be held on May 20. Students should wear sports uniform. Parents are welcome.</div>
+      </div>
+      <div class="card" style="margin-top:6px;">
+        <div class="card-hdr"><h3>New Announcement</h3></div>
+        <div class="fgrid2">
+          <div class="fg"><label>Audience</label><select><option>All Parents</option><option>Teachers</option><option>Class 7-A</option><option>Class 8-B</option></select></div>
+          <div class="fg"><label>Priority</label><select><option>Normal</option><option>Urgent (Cannot dismiss)</option></select></div>
+        </div>
+        <div class="fg"><label>Message</label><textarea placeholder="Type your announcement...">School will remain open tomorrow. Please send students in proper uniform.</textarea></div>
+        <div class="fg">
+          <label>Attach Circular Image</label>
+          <div class="upload-zone" onclick="document.getElementById('annFile').click()">
+            <div class="uz-icon">📄</div><div class="uz-title">Upload circular or notice image</div>
+          </div>
+          <input type="file" id="annFile" accept="image/*" multiple style="display:none;" data-grid="annGrid"/>
+          <div class="preview-grid" id="annGrid"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
+          <span style="font-size:12px;font-weight:700;color:var(--muted);">SEND VIA:</span>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked/> WhatsApp</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked/> SMS</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12.5px;cursor:pointer;"><input type="checkbox" checked/> Push Notification</label>
+        </div>
+        <button class="btn-primary" onclick="toast('📣 Announcement sent! Parents cannot disable critical alerts.')">Send Announcement</button>
+      </div>
+    </section>
+
+    <!-- ▌ COMPLAINTS ▌ -->
+    <section class="screen" id="sc-complaints">
+      <div class="g2">
+        <div>
+          <div class="ann-card urgent" style="margin-bottom:10px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><div class="ann-title">Bus arrived 20 min late at Stop 3</div><span class="pill pill-red">New</span></div>
+            <div class="ann-meta">Parent: Mrs. Khan · Class 7-A · Today</div>
+            <div class="ann-body" style="margin-bottom:10px;">Bus A was delayed by 20 minutes at Stop 3. Students were waiting in rain.</div>
+            <div style="display:flex;gap:7px;"><button class="btn-primary btn-sm" onclick="toast('Reply sent to Mrs. Khan.')">Reply</button><button class="btn-ghost btn-sm" onclick="toast('Complaint resolved.')">Resolve</button></div>
+          </div>
+          <div class="ann-card" style="border-left:4px solid var(--amber);">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;"><div class="ann-title">Fee receipt not received</div><span class="pill pill-amber">In Progress</span></div>
+            <div class="ann-meta">Parent: Mr. Noor · Class 5-A · Yesterday</div>
+            <div class="ann-body">Paid via EasyPaisa but no receipt received.</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Submit Complaint</h3><span class="pill pill-gold">Parent → HM → Director</span></div>
+          <div class="fg"><label>Category</label><select><option>Transport</option><option>Teacher</option><option>Fee</option><option>Safety</option><option>Facilities</option></select></div>
+          <div class="fg"><label>Details</label><textarea placeholder="Describe your complaint in detail...">Bus arrived late at Stop 3 today.</textarea></div>
+          <div class="fg">
+            <label>Evidence Image</label>
+            <div class="upload-zone" onclick="document.getElementById('compFile').click()">
+              <div class="uz-icon">📷</div><div class="uz-title">Attach screenshot or photo</div>
+            </div>
+            <input type="file" id="compFile" accept="image/*" multiple style="display:none;" data-grid="compGrid"/>
+            <div class="preview-grid" id="compGrid"></div>
+          </div>
+          <button class="btn-primary btn-full" onclick="toast('Complaint submitted and assigned to HM. You will get a reply within 24 hours.')">Submit Complaint</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ AI ASSISTANT ▌ -->
+    <section class="screen" id="sc-ai">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><h3>AI Chat</h3><span class="pill pill-blue">Claude Powered</span></div>
+          <div class="chat-box" id="chatBox">
+            <div class="msg bot">Assalam-o-Alaikum! 🎓<br><br>Main <b>EDUVANCE AI Assistant</b> hoon — Claude by Anthropic se powered.<br><br><b>Urdu, English, ya Sindhi</b> mein baat karein. <b>Image bhi upload</b> kar sakte hain — worksheet, notice, ya koi bhi photo — main analyze karunga!<br><br>Kya madad chahiye?</div>
+          </div>
+          <div class="ai-img-strip" id="aiStrip"></div>
+          <div class="chat-input-row">
+            <label for="aiImgFile" title="Attach image" style="width:40px;height:40px;border:1.5px solid var(--border);border-radius:var(--r);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:18px;background:var(--surface);">📷</label>
+            <input type="file" id="aiImgFile" accept="image/*" style="display:none;" onchange="aiAttachImg(this)"/>
+            <input type="text" id="chatInput" placeholder="Sawal poochein ya image upload karein..." onkeydown="if(event.key==='Enter')aiSend()"/>
+            <button class="ai-send" id="aiSendBtn" onclick="aiSend()">➤</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Quick AI Tools</h3></div>
+          <div class="qa-grid">
+            <div class="qa-btn" onclick="quickAI('Class 7 Science ke liye 40 minute ka detailed lesson plan banao Urdu mein. Objectives, activities, assessment sab shaamil ho.')"><span class="qa-ico">📚</span>Lesson Plan</div>
+            <div class="qa-btn" onclick="quickAI('Class 8 Math ke liye 20 MCQ question paper banao. Algebra chapter. Answers bhi do.')"><span class="qa-ico">📝</span>Question Paper</div>
+            <div class="qa-btn" onclick="quickAI('Fee due date ke liye parents ko Urdu mein ek professional notice likho.')"><span class="qa-ico">📄</span>Urdu Notice</div>
+            <div class="qa-btn" onclick="quickAI('Class 5 English ke liye ek hafte ka lesson plan banao with daily activities.')"><span class="qa-ico">🗓</span>Weekly Plan</div>
+            <div class="qa-btn" onclick="quickAI('Kamzor students ke liye Mathematics mein interesting fun activities suggest karo jo unka interest barhayen.')"><span class="qa-ico">❤️</span>Weak Students</div>
+            <div class="qa-btn" onclick="quickAI('School ke liye ek professional parent-teacher meeting ka agenda aur notice banao.')"><span class="qa-ico">🤝</span>PTM Agenda</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ BUS TRACKING ▌ -->
+    <section class="screen" id="sc-bus">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><h3>Live Bus Tracking</h3><div class="side"><div class="live-dot"></div><span style="font-size:12px;font-weight:700;color:var(--green);">GPS Active</span></div></div>
+          <div class="bus-map">
+            <div class="bus-grid-bg"></div>
+            <div class="bus-route"></div>
+            <div class="bus-icon">🚌</div>
+            <div class="bus-live"><div class="live-dot"></div>Live GPS</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Route A — Morning</h3><span class="pill pill-blue">3 stops left</span></div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-time">07:15</div><div>🏫 School Gate — Started</div></div>
+            <div class="tl-item"><div class="tl-time">07:28</div><div>📍 Stop 1 — Completed ✅</div></div>
+            <div class="tl-item"><div class="tl-time">07:43</div><div>📍 Stop 2 — Completed ✅</div></div>
+            <div class="tl-item"><div class="tl-time">07:58</div><div>📍 Stop 3 — <b style="color:var(--blue);">Running now</b></div></div>
+            <div class="tl-item"><div class="tl-time">08:10</div><div>📍 Stop 4 — Upcoming</div></div>
+          </div>
+          <button class="btn-primary btn-full" style="margin-top:14px;" onclick="toast('📍 Parents at Stop 3 & 4 notified with current bus location.')">Notify Parents</button>
+          <div class="alert-box alert-info" style="margin-top:11px;">ℹ️ <div><div class="a-title">Auto WhatsApp</div><div>Parents get WhatsApp 5 min before bus reaches their stop.</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ ADMISSION ▌ -->
+    <section class="screen" id="sc-admission">
+      <div class="g2">
+        <div class="card">
+          <div class="card-hdr"><h3>New Admission</h3><span class="pill pill-blue">Auto GR</span></div>
+          <div class="fgrid2">
+            <div class="fg"><label>Student Name *</label><input id="stuName" value="New Student"/></div>
+            <div class="fg"><label>Date of Birth</label><input type="date"/></div>
+            <div class="fg"><label>Class *</label><select><option>Nursery</option><option>Class 1</option><option>Class 2</option><option>Class 3</option><option>Class 4</option><option>Class 5</option><option>Class 6</option><option>Class 7</option><option>Class 8</option><option>Class 9</option><option>Class 10</option></select></div>
+            <div class="fg"><label>Section</label><select><option>A</option><option>B</option><option>C</option></select></div>
+            <div class="fg"><label>Father's Name *</label><input value="Parent Name"/></div>
+            <div class="fg"><label>Mobile (WhatsApp)</label><input value="0300-0000000"/></div>
+          </div>
+          <div class="fg"><label>Fee Method</label><select><option>JazzCash</option><option>EasyPaisa</option><option>Bank Transfer</option><option>Cash</option></select></div>
+          <div class="fg">
+            <label>Student Photo</label>
+            <div style="display:flex;gap:10px;align-items:flex-start;">
+              <div id="stuPhotoPreview" style="width:72px;height:72px;border-radius:var(--r);background:var(--bg);border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden;">👤</div>
+              <div class="upload-zone" style="flex:1;" onclick="document.getElementById('stuPhoto').click()">
+                <div class="uz-icon" style="font-size:20px;">📷</div>
+                <div class="uz-title" style="font-size:12px;">Upload photo</div>
+              </div>
+              <input type="file" id="stuPhoto" accept="image/*" style="display:none;" onchange="previewStuPhoto(this)"/>
+            </div>
+          </div>
+          <button class="btn-primary btn-full" style="min-height:44px;" onclick="doAdmission()">Create Admission → Auto GR</button>
+        </div>
+        <div class="card">
+          <div class="card-hdr"><h3>Generated Record</h3></div>
+          <div style="padding:14px;background:var(--blue-soft);border-radius:var(--r);margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:3px;">GR Number</div>
+            <div style="font-size:22px;font-weight:800;color:var(--blue);font-family:var(--mono);" id="grDisplay">EDV-2026-004</div>
+          </div>
+          <div class="timeline">
+            <div class="tl-item"><div class="tl-time">✅</div><div>Parent account auto-created</div></div>
+            <div class="tl-item"><div class="tl-time">✅</div><div>Fee voucher generated</div></div>
+            <div class="tl-item"><div class="tl-time">✅</div><div>Welcome WhatsApp sent</div></div>
+            <div class="tl-item"><div class="tl-time">✅</div><div>Student added to class roll</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ▌ GALLERY ▌ -->
+    <section class="screen" id="sc-gallery">
+      <div class="card">
+        <div class="card-hdr"><h3>Photo Gallery</h3><span class="pill pill-blue">AI Analyze</span></div>
+        <div class="upload-zone" id="galDrop"
+          onclick="document.getElementById('galFile').click()"
+          ondragover="event.preventDefault();this.classList.add('dragover')"
+          ondragleave="this.classList.remove('dragover')"
+          ondrop="event.preventDefault();this.classList.remove('dragover');galDrop(event)">
+          <div class="uz-icon" style="font-size:36px;">🖼</div>
+          <div class="uz-title">Click or drag & drop photos here</div>
+          <div class="uz-sub">Class activities, events, homework evidence, student documents · Multiple files supported</div>
+        </div>
+        <input type="file" id="galFile" accept="image/*" multiple style="display:none;" onchange="galUpload(this)"/>
+        <div id="galAIWrap" style="display:none;margin-top:12px;" class="card">
+          <div class="card-hdr"><h3>AI Analysis</h3><span class="pill pill-blue">Claude</span></div>
+          <div id="galAIOut" style="font-size:13px;color:var(--ink2);line-height:1.7;"></div>
+        </div>
+        <div class="preview-grid" id="galGrid" style="margin-top:12px;">
+          <div style="grid-column:1/-1;text-align:center;padding:28px;color:var(--muted);font-size:13px;">No photos yet. Upload to get started!</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</section>
+
+<!-- TOAST -->
+<div class="toast" id="toastEl"></div>
+
+<script>
+// ══ NAV CONFIG ══
+var SCREENS=[
+  ['dashboard','🏠','Dashboard','Live school overview'],
+  ['students','👥','Students','Student records and GR numbers'],
+  ['teachers','👨‍🏫','Teachers','Attendance and performance'],
+  ['attendance','✅','Attendance','Daily marking and auto alerts'],
+  ['periods','⏱','Period Alerts','Auto teacher and HM alerts'],
+  ['results','📊','Results','Board-format marks and PDFs'],
+  ['fees','💳','Fees','JazzCash, EasyPaisa, receipts'],
+  ['diary','📘','Digital Diary','Homework + image sharing'],
+  ['announcements','📣','Announcements','Push, WhatsApp, SMS'],
+  ['complaints','📝','Complaints','Parent escalation system'],
+  ['ai','🤖','AI Assistant','Claude AI — lesson plans, analysis'],
+  ['bus','🚌','Bus Tracking','Live GPS route monitoring'],
+  ['admission','➕','New Admission','Photo + auto GR intake'],
+  ['gallery','🖼','Photo Gallery','Image storage + AI analysis']
+];
+
+var ROLES={
+  'Super Admin':{i:'SA',n:'Super Admin',r:'Super Admin'},
+  'Director':{i:'DR',n:'Dr. Rashid',r:'Director'},
+  'Head Teacher / HM':{i:'HT',n:'Mrs. Amna',r:'Head Teacher'},
+  'Teacher':{i:'TK',n:'Fatima Khan',r:'Teacher'},
+  'Parent':{i:'PA',n:'Abdul Karimi',r:'Parent'}
+};
+
+// Build nav
+var nav=document.getElementById('nav');
+var navSections=[
+  ['Main',['dashboard','students','teachers','attendance','periods']],
+  ['Management',['results','fees','diary','announcements','complaints']],
+  ['Tools',['ai','bus','admission','gallery']]
+];
+navSections.forEach(function(sec){
+  var lbl=document.createElement('div');
+  lbl.className='nav-section';
+  lbl.textContent=sec[0];
+  nav.appendChild(lbl);
+  sec[1].forEach(function(id){
+    var sc=SCREENS.find(function(s){return s[0]===id;});
+    if(!sc) return;
+    var btn=document.createElement('button');
+    btn.className='nav-btn';
+    btn.dataset.screen=id;
+    btn.innerHTML='<span class="nav-icon">'+sc[1]+'</span><span>'+sc[2]+'</span>';
+    if(id==='announcements'||id==='complaints') btn.innerHTML+='<span class="nav-badge">'+( id==='announcements'?'3':'2')+'</span>';
+    btn.addEventListener('click',function(){go(id);});
+    nav.appendChild(btn);
+  });
+});
+
+// ══ LOGIN ══
+document.getElementById('loginForm').addEventListener('submit',function(e){
+  e.preventDefault();
+  var role=document.getElementById('roleSelect').value;
+  var rd=ROLES[role]||ROLES['Director'];
+  document.getElementById('tbAva').textContent=rd.i;
+  document.getElementById('tbName').textContent=rd.n;
+  document.getElementById('tbRole').textContent=rd.r;
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('app').style.display='grid';
+  go('dashboard');
+  toast('Welcome to EDUVANCE, '+rd.n+'!');
+});
+
+document.getElementById('logoutBtn').addEventListener('click',function(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginPage').style.display='grid';
+});
+
+document.getElementById('menuBtn').addEventListener('click',function(){
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// ══ NAVIGATION ══
+function go(id){
+  document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('active');});
+  var sc=document.getElementById('sc-'+id);
+  if(sc) sc.classList.add('active');
+  var btn=document.querySelector('.nav-btn[data-screen="'+id+'"]');
+  if(btn) btn.classList.add('active');
+  var data=SCREENS.find(function(s){return s[0]===id;});
+  if(data){document.getElementById('pgTitle').textContent=data[2];document.getElementById('pgSub').textContent=data[3];}
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+// ══ TOAST ══
+function toast(msg){
+  var el=document.getElementById('toastEl');
+  el.textContent=msg;
+  el.style.display='block';
+  clearTimeout(window._toast);
+  window._toast=setTimeout(function(){el.style.display='none';},3200);
+}
+
+// ══ ATTENDANCE ══
+var attStates=['present','present','present','absent','leave','present','present','absent','present','present','present','leave'];
+function buildAtt(){
+  var grid=document.getElementById('attGrid');
+  grid.innerHTML=attStates.map(function(s,i){
+    var lbl=s==='present'?'P':s==='absent'?'A':'L';
+    return '<div class="att-cell '+s+'" onclick="toggleAtt(this)">'+(i+1)+'<span>'+lbl+'</span></div>';
+  }).join('');
+}
+function toggleAtt(el){
+  var order=['present','absent','leave'];
+  var cur=order.find(function(s){return el.classList.contains(s);});
+  var next=order[(order.indexOf(cur)+1)%3];
+  el.classList.remove('present','absent','leave');
+  el.classList.add(next);
+  el.querySelector('span').textContent=next==='present'?'P':next==='absent'?'A':'L';
+}
+function shuffleAtt(){
+  var s=['present','absent','leave'];
+  attStates=attStates.map(function(){return s[Math.floor(Math.random()*s.length)];});
+  buildAtt();
+  toast('Attendance demo shuffled!');
+}
+buildAtt();
+
+// ══ PERIOD BOARD ══
+var periods=[
+  {cls:'Class 7-A',sub:'Science',teacher:'Miss Sara',time:'09:30–10:10',status:'On Time'},
+  {cls:'Class 8-B',sub:'Math',teacher:'Sir Ahmed',time:'10:10–10:50',status:'Late'},
+  {cls:'Class 5-A',sub:'English',teacher:'Sir Bilal',time:'10:50–11:30',status:'Not Started'},
+  {cls:'Class 6-C',sub:'Urdu',teacher:'Miss Hina',time:'11:30–12:10',status:'Running'}
+];
+function buildPeriods(){
+  var board=document.getElementById('periodBoard');
+  board.innerHTML=periods.map(function(p,i){
+    var pc=p.status==='On Time'||p.status==='Running'?'pill-green':p.status==='Late'?'pill-amber':'pill-red';
+    return '<div class="period-row"><div><strong>'+p.cls+'</strong><span class="sub">'+p.sub+'</span></div><div style="font-size:13px;">'+p.teacher+'</div><div style="font-size:12px;color:var(--muted);">'+p.time+'</div><span class="pill '+pc+'">'+p.status+'</span><button class="btn-ghost btn-sm" onclick="startPeriod('+i+')">▶ Start</button></div>';
+  }).join('');
+  document.getElementById('lateCount').textContent=periods.filter(function(p){return p.status==='Late';}).length;
+  document.getElementById('missedCount').textContent=periods.filter(function(p){return p.status==='Not Started';}).length;
+}
+function startPeriod(i){
+  periods[i].status='Running';
+  buildPeriods();
+  toast('✅ '+periods[i].cls+' '+periods[i].sub+' marked as started.');
+}
+buildPeriods();
+
+// ══ UPLOADS (generic) ══
+document.querySelectorAll('input[type=file][data-grid]').forEach(function(inp){
+  inp.addEventListener('change',function(){addToGrid(this.dataset.grid,Array.from(this.files));});
+});
+function addToGrid(gridId,files){
+  var grid=document.getElementById(gridId);
+  files.forEach(function(f){
+    if(!f.type.startsWith('image/')) return;
+    var r=new FileReader();
+    r.onload=function(e){
+      var tile=document.createElement('div');
+      tile.className='preview-tile';
+      tile.innerHTML='<img src="'+e.target.result+'"/><button class="del-btn" onclick="this.parentNode.remove()">✕</button>';
+      grid.appendChild(tile);
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+// ══ STUDENT PHOTO PREVIEW ══
+function previewStuPhoto(input){
+  var f=input.files[0];if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    var p=document.getElementById('stuPhotoPreview');
+    p.innerHTML='<img src="'+e.target.result+'" style="width:100%;height:100%;object-fit:cover;"/>';
+  };
+  r.readAsDataURL(f);
+}
+
+// ══ ADMISSION ══
+function doAdmission(){
+  var n=Math.floor(100+Math.random()*899);
+  var gr='EDV-2026-'+n;
+  document.getElementById('grDisplay').textContent=gr;
+  toast('✅ Admission created! GR: '+gr+' · Parent account, fee voucher, and welcome WhatsApp ready.');
+}
+
+// ══ GALLERY ══
+var galCount=0;
+function galUpload(input){_galAdd(Array.from(input.files));}
+function galDrop(ev){_galAdd(Array.from(ev.dataTransfer.files).filter(function(f){return f.type.startsWith('image/');}));}
+function _galAdd(files){
+  var grid=document.getElementById('galGrid');
+  var empty=grid.querySelector('div[style*="grid-column"]');
+  if(empty) empty.remove();
+  files.forEach(function(f){
+    var r=new FileReader();
+    r.onload=function(e){
+      galCount++;
+      var b64=e.target.result.split(',')[1];
+      var tile=document.createElement('div');
+      tile.className='preview-tile';
+      tile.innerHTML='<img src="'+e.target.result+'"/><button class="del-btn" onclick="this.parentNode.remove()">✕</button><div class="ai-badge" data-b64="'+b64+'" data-mime="'+f.type+'" data-name="'+f.name+'" onclick="galAnalyze(this)">AI ▶</div>';
+      grid.appendChild(tile);
+    };
+    r.readAsDataURL(f);
+  });
+}
+async function galAnalyze(btn){
+  var b64=btn.dataset.b64,mime=btn.dataset.mime,name=btn.dataset.name;
+  var wrap=document.getElementById('galAIWrap'),out=document.getElementById('galAIOut');
+  wrap.style.display='block';
+  out.innerHTML='<span style="color:var(--muted);">⏳ AI analyze kar raha hai...</span>';
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:mime,data:b64}},{type:'text',text:'Yeh school ki ek photo hai. Urdu aur English mein brief analysis dein: (1) Is mein kya ho raha hai? (2) Koi notable cheez? (3) Koi improvement suggestion? Short aur helpful jawab dein.'}]}]})});
+    var data=await res.json();
+    var txt=(data.content&&data.content[0]&&data.content[0].text)||'Analysis nahi ho saki.';
+    out.innerHTML='<b style="color:var(--blue);">'+name+'</b><br><br>'+txt.replace(/\n/g,'<br>');
+  }catch(e){out.innerHTML='<span style="color:var(--red);">AI se rabta nahi ho saka. Dobara try karein.</span>';}
+}
+
+// ══ AI CHAT ══
+var aiImgs=[],aiHistory=[];
+function aiAttachImg(input){
+  var f=input.files[0];if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){aiImgs.push({b64:e.target.result.split(',')[1],mime:f.type,src:e.target.result,name:f.name});renderStrip();};
+  r.readAsDataURL(f);
+  input.value='';
+}
+function renderStrip(){
+  var strip=document.getElementById('aiStrip');
+  strip.innerHTML='';
+  aiImgs.forEach(function(img,i){
+    var d=document.createElement('div');
+    d.className='ai-img-mini';
+    d.innerHTML='<img src="'+img.src+'"/><button class="rm" onclick="rmImg('+i+')">✕</button>';
+    strip.appendChild(d);
+  });
+}
+function rmImg(i){aiImgs.splice(i,1);renderStrip();}
+function quickAI(txt){
+  go('ai');
+  setTimeout(function(){document.getElementById('chatInput').value=txt;aiSend();},150);
+}
+async function aiSend(){
+  var input=document.getElementById('chatInput');
+  var msg=input.value.trim();
+  if(!msg&&aiImgs.length===0) return;
+  var btn=document.getElementById('aiSendBtn');
+  btn.disabled=true;
+  input.value='';
+  var box=document.getElementById('chatBox');
+  var content=[];
+  aiImgs.forEach(function(img){content.push({type:'image',source:{type:'base64',media_type:img.mime,data:img.b64}});});
+  if(msg) content.push({type:'text',text:msg});
+  var uDiv=document.createElement('div');
+  uDiv.className='msg me';
+  if(aiImgs.length>0){
+    var thumbs='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;">';
+    aiImgs.forEach(function(img){thumbs+='<img src="'+img.src+'" style="width:46px;height:46px;object-fit:cover;border-radius:5px;border:1px solid rgba(255,255,255,.3);"/>';});
+    thumbs+='</div>';
+    uDiv.innerHTML=thumbs+(msg||'');
+  } else {uDiv.textContent=msg;}
+  box.appendChild(uDiv);
+  aiImgs=[];renderStrip();
+  var think=document.createElement('div');
+  think.className='msg bot thinking';
+  think.textContent='AI soch raha hai...';
+  box.appendChild(think);
+  box.scrollTop=box.scrollHeight;
+  aiHistory.push({role:'user',content:content});
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:'Aap EDUVANCE School Management System ke AI Assistant hain — Claude by Anthropic se powered. Pakistan ke teachers, directors, HMs aur parents ki madad karte hain. Urdu aur English dono mein jawab dein. Short, clear, aur helpful. Lesson plans, question papers, attendance, fees, period alerts, image analysis sab mein mahir hain. Images analyze kar ke school-relevant feedback dein.',messages:aiHistory})});
+    var data=await res.json();
+    var reply=(data.content&&data.content[0]&&data.content[0].text)||'Jawab nahi mila.';
+    aiHistory.push({role:'assistant',content:reply});
+    think.className='msg bot';
+    think.innerHTML=reply.replace(/\*\*(.*?)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');
+  }catch(err){
+    think.className='msg bot';
+    think.innerHTML='<span style="color:var(--red);">AI se rabta nahi ho saka. Dobara try karein.</span>';
+  }
+  box.scrollTop=box.scrollHeight;
+  btn.disabled=false;
+  input.focus();
+}
+</script>
+</body>
+</html>
