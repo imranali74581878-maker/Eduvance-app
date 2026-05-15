@@ -4,6 +4,9 @@ on:
   push:
     branches: [ main ]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,10 +19,25 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Capacitor
+        run: |
+          npm install @capacitor/core @capacitor/android @capacitor/cli
+
       - name: Copy HTML to www
         run: |
           mkdir -p www
           cp index.html www/index.html
+
+      - name: Init and Add Android
+        run: |
+          npx cap init EDUVANCE com.eduvance.school --web-dir www
+          npx cap add android
+          npx cap sync android
 
       - name: Build APK
         run: |
