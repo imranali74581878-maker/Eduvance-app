@@ -1,1 +1,35 @@
-# Eduvance-app
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install and Build
+        run: |
+          npm install @capacitor/core @capacitor/android @capacitor/cli
+          mkdir -p www
+          cp index.html www/index.html
+          npx cap copy android
+
+      - name: Build APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: eduvance-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk# Eduvance-app
