@@ -32,4 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: eduvance-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+        with:
+          name: eduvance-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk# Eduvance-app
