@@ -8,21 +8,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
-      - name: Install and Build
+      - name: Copy HTML to www
         run: |
-          npm install @capacitor/core @capacitor/android @capacitor/cli
-          npx cap init EDUVANCE com.eduvance.school --web-dir www
           mkdir -p www
-          cp index.html www/index.html
-          npx cap add android
-          npx cap copy android
+          cp eduvance-final.html www/index.html
 
       - name: Build APK
         run: |
