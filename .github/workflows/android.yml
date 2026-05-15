@@ -9,8 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -18,16 +22,21 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      - name: Init npm if missing
+        run: npm init -y
 
-      - name: Install Capacitor CLI
-        run: npm install -g @capacitor/cli
+      - name: Install Capacitor
+        run: npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      # 🔥 IMPORTANT: Android folder recreate hoga yahan
-      - name: Recreate Android platform
+      - name: Create www folder
+        run: |
+          mkdir -p www
+          cp index.html www/index.html || true
+
+      - name: Init Capacitor
+        run: npx cap init EDUVANCE com.eduvance.app --web-dir www
+
+      - name: Add Android platform
         run: npx cap add android
 
       - name: Sync Capacitor
