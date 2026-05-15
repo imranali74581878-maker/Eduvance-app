@@ -33,27 +33,40 @@ jobs:
           mkdir -p www
           cp index.html www/index.html
 
-      - name: Init Capacitor
+      - name: Init and Add Android
         run: |
           npx cap init EDUVANCE com.eduvance.school --web-dir www
-
-      - name: Add Android Platform
-        run: |
           npx cap add android
-
-      - name: Sync Android
-        run: |
           npx cap sync android
+
+      - name: Fix Kotlin Version
+        run: |
+          cat > android/variables.gradle << 'EOF'
+          ext {
+              minSdkVersion = 23
+              compileSdkVersion = 34
+              targetSdkVersion = 34
+              androidxActivityVersion = '1.7.0'
+              androidxAppCompatVersion = '1.6.1'
+              androidxCoordinatorLayoutVersion = '1.2.0'
+              androidxCoreVersion = '1.10.0'
+              androidxFragmentVersion = '1.5.7'
+              junitVersion = '4.13.2'
+              androidxJunitVersion = '1.1.5'
+              androidxEspressoCoreVersion = '3.5.1'
+              cordovaAndroidVersion = '10.1.1'
+              kotlinVersion = '1.9.0'
+          }
+          EOF
 
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: eduvance-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
