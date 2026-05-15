@@ -16,15 +16,10 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-
       - name: Copy HTML to www
         run: |
           mkdir -p www
-          cp eduvance-final.html www/index.html
+          cp index.html www/index.html
 
       - name: Build APK
         run: |
