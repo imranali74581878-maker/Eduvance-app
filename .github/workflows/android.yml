@@ -2,7 +2,8 @@ name: Build APK
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
@@ -21,13 +22,12 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 21
-
-      - name: Install Capacitor CLI
-        run: npm install -g @capacitor/cli
+          java-version: 17
 
       - name: Install dependencies
-        run: npm install @capacitor/core @capacitor/android
+        run: |
+          npm install
+          npm install @capacitor/core @capacitor/android @capacitor/cli
 
       - name: Prepare web assets
         run: |
@@ -35,22 +35,35 @@ jobs:
           cp index.html www/index.html
 
       - name: Initialize Capacitor
-        run: npx cap init Eduvance com.eduvance.app --web-dir www
+        run: |
+          npx cap init Eduvance com.eduvance.app --web-dir www
 
       - name: Add Android platform
-        run: npx cap add android
+        run: |
+          npx cap add android
 
-      - name: Sync Capacitor project
-        run: npx cap sync android
+      - name: Fix Kotlin version
+        run: |
+          sed -i 's/1.6.21/1.8.22/g' android/build.gradle || true
+          sed -i 's/1.7.10/1.8.22/g' android/build.gradle || true
 
-      - name: Build APK
+      - name: Sync Capacitor
+        run: |
+          npx cap sync android
+
+      - name: Clean Gradle build
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew clean
 
-      - name: Upload APK artifact
+      - name: Build Debug APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: eduvance-apk
+          name: Eduvance-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
