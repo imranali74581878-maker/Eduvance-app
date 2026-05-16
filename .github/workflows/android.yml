@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -23,36 +23,34 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Install Capacitor CLI
+        run: npm install -g @capacitor/cli
+
       - name: Install dependencies
-        run: |
-          npm install -g @capacitor/cli
-          npm install @capacitor/core @capacitor/android
+        run: npm install @capacitor/core @capacitor/android
 
       - name: Prepare web assets
         run: |
           mkdir -p www
-          cp index.html www/index.html || true
+          cp index.html www/index.html
 
-      # 🔥 SAFE: only adds if missing
+      - name: Initialize Capacitor
+        run: npx cap init Eduvance com.eduvance.app --web-dir www
+
       - name: Add Android platform
-        run: npx cap add android || true
+        run: npx cap add android
 
-      - name: Sync Capacitor
+      - name: Sync Capacitor project
         run: npx cap sync android
-
-      - name: Clean Gradle build
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew clean --no-daemon
 
       - name: Build APK
         run: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug --no-daemon
 
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: eduvance-debug-apk
+          name: eduvance-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
