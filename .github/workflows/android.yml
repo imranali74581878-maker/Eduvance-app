@@ -28,14 +28,16 @@ jobs:
 
       - name: Create package.json
         run: |
-          echo '{
+          cat > package.json << 'EOF'
+          {
             "name": "eduvance-app",
             "version": "1.0.0",
-            "description": "Eduvance App",
+            "description": "Eduvance School Management App",
             "main": "index.js",
             "scripts": {},
             "dependencies": {}
-          }' > package.json
+          }
+          EOF
 
       - name: Install Capacitor
         run: |
@@ -72,4 +74,32 @@ jobs:
           find android -type f -name "*.gradle" -exec sed -i 's/1\.6\.21/1.8.22/g' {} +
           find android -type f -name "*.gradle" -exec sed -i 's/1\.7\.10/1.8.22/g' {} +
 
-      -
+      - name: Force Kotlin Resolution Strategy
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          configurations.all {
+              resolutionStrategy {
+                  force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+                  force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
+                  force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+              }
+          }
+          EOF
+
+      - name: Clean Build
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean --no-daemon
+
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Eduvance-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
