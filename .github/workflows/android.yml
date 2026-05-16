@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: 20
 
-      - name: Setup Java
+      - name: Setup Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -29,25 +29,31 @@ jobs:
           npm install -g @capacitor/cli
           npm install @capacitor/core @capacitor/android
 
-      - name: Create web directory
+      - name: Create WWW folder
         run: |
           mkdir -p www
           cp index.html www/index.html
 
-      - name: Create Capacitor config
+      - name: Create Capacitor Config
         run: |
-          echo '{
+          cat > capacitor.config.json <<EOF
+          {
             "appId": "com.eduvance.app",
             "appName": "Eduvance",
             "webDir": "www"
-          }' > capacitor.config.json
+          }
+          EOF
 
-      - name: Initialize Android project
+      - name: Add Android Platform
         run: |
           npx cap add android
 
-      - name: Fix Kotlin version
+      - name: Fix Java and Kotlin Versions
         run: |
+          sed -i 's/VERSION_21/VERSION_17/g' android/app/build.gradle || true
+          sed -i 's/VERSION_20/VERSION_17/g' android/app/build.gradle || true
+          sed -i "s/jvmTarget = '21'/jvmTarget = '17'/g" android/app/build.gradle || true
+          sed -i "s/jvmTarget = '20'/jvmTarget = '17'/g" android/app/build.gradle || true
           sed -i 's/1.6.21/1.8.22/g' android/build.gradle || true
           sed -i 's/1.7.10/1.8.22/g' android/build.gradle || true
 
@@ -60,7 +66,7 @@ jobs:
           cd android
           chmod +x gradlew
           ./gradlew clean
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
