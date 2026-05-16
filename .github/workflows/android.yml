@@ -24,21 +24,25 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Install dependencies
+      - name: Install Capacitor
         run: |
-          npm install
-          npm install @capacitor/core @capacitor/android @capacitor/cli
+          npm install -g @capacitor/cli
+          npm install @capacitor/core @capacitor/android
 
-      - name: Prepare web assets
+      - name: Create web directory
         run: |
           mkdir -p www
           cp index.html www/index.html
 
-      - name: Initialize Capacitor
+      - name: Create Capacitor config
         run: |
-          npx cap init Eduvance com.eduvance.app --web-dir www
+          echo '{
+            "appId": "com.eduvance.app",
+            "appName": "Eduvance",
+            "webDir": "www"
+          }' > capacitor.config.json
 
-      - name: Add Android platform
+      - name: Initialize Android project
         run: |
           npx cap add android
 
@@ -51,16 +55,12 @@ jobs:
         run: |
           npx cap sync android
 
-      - name: Clean Gradle build
+      - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew clean
-
-      - name: Build Debug APK
-        run: |
-          cd android
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
