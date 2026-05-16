@@ -24,10 +24,20 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Create package.json
+        run: |
+          echo '{
+            "name": "eduvance-app",
+            "version": "1.0.0",
+            "description": "Eduvance App",
+            "main": "index.js",
+            "scripts": {},
+            "dependencies": {}
+          }' > package.json
+
       - name: Install Capacitor
         run: |
-          npm install -g @capacitor/cli
-          npm install @capacitor/core @capacitor/android
+          npm install @capacitor/cli@6 @capacitor/core@6 @capacitor/android@6
 
       - name: Create WWW folder
         run: |
@@ -36,7 +46,7 @@ jobs:
 
       - name: Create Capacitor Config
         run: |
-          cat > capacitor.config.json <<EOF
+          cat > capacitor.config.json << 'EOF'
           {
             "appId": "com.eduvance.app",
             "appName": "Eduvance",
@@ -45,28 +55,44 @@ jobs:
           EOF
 
       - name: Add Android Platform
-        run: |
-          npx cap add android
-
-      - name: Fix Java and Kotlin Versions
-        run: |
-          sed -i 's/VERSION_21/VERSION_17/g' android/app/build.gradle || true
-          sed -i 's/VERSION_20/VERSION_17/g' android/app/build.gradle || true
-          sed -i "s/jvmTarget = '21'/jvmTarget = '17'/g" android/app/build.gradle || true
-          sed -i "s/jvmTarget = '20'/jvmTarget = '17'/g" android/app/build.gradle || true
-          sed -i 's/1.6.21/1.8.22/g' android/build.gradle || true
-          sed -i 's/1.7.10/1.8.22/g' android/build.gradle || true
+        run: npx cap add android
 
       - name: Sync Capacitor
+        run: npx cap sync android
+
+      - name: Force Java 17 in ALL Gradle files
         run: |
-          npx cap sync android
+          find android -type f -name "*.gradle" -exec sed -i 's/VERSION_21/VERSION_17/g' {} +
+          find android -type f -name "*.gradle" -exec sed -i 's/JavaVersion.VERSION_21/JavaVersion.VERSION_17/g' {} +
+          find android -type f -name "*.gradle" -exec sed -i "s/jvmTarget = '21'/jvmTarget = '17'/g" {} +
+          find android -type f -name "*.gradle" -exec sed -i 's/sourceCompatibility = 21/sourceCompatibility = 17/g' {} +
+          find android -type f -name "*.gradle" -exec sed -i 's/targetCompatibility = 21/targetCompatibility = 17/g' {} +
+          find android -type f -name "*.gradle" -exec sed -i 's/1\.6\.21/1.8.22/g' {} +
+          find android -type f -name "*.gradle" -exec sed -i 's/1\.7\.10/1.8.22/g' {} +
+
+      - name: Force Kotlin Resolution Strategy
+        run: |
+          cat >> android/app/build.gradle << 'EOF'
+
+          configurations.all {
+              resolutionStrategy {
+                  force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+                  force "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22"
+                  force "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+              }
+          }
+          EOF
+
+      - name: Clean Build
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew clean --no-daemon
 
       - name: Build APK
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew clean
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          ./gradlew assembleDebug --no-daemon
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
